@@ -2,7 +2,23 @@
   <div class="markdown-editor">
     <!-- 工具栏 -->
     <div class="toolbar">
-      <el-button @click="exportFile">导出</el-button>
+      <i class="iconfont" title="粗体">&#xe61c;</i>
+      <i class="iconfont" title="斜体">&#xe614;</i>
+      <i class="iconfont" title="删除线">&#xe61b;</i>
+      <i class="iconfont" title="下划线">&#xe634;</i>
+      <i class="iconfont" title="标记">&#xe66a;</i>
+      <i class="iconfont" title="标题">&#xe645;</i>
+      <i class="iconfont" title="链接">&#xe625;</i>
+      <i class="iconfont" title="引用">&#xe697;</i>
+      <i class="iconfont" title="代码">&#xe610;</i>
+      <i class="iconfont" title="无序列表">&#xe82d;</i>
+      <i class="iconfont" title="有序列表">&#xe694;</i>
+      <i class="iconfont" title="表格">&#xe82f;</i>
+      <i class="iconfont" title="横线">&#xe600;</i>
+      <i class="iconfont" title="插入图片">&#xe82c;</i>
+      <i class="iconfont" title="插入分页符">&#xe646;</i>
+      <i class="iconfont" title="清除全部">&#xe82e;</i>
+      <i class="iconfont" title="导出">&#xe6ad;</i>
     </div>
     <div class="editor-area">
       <el-row>
@@ -178,6 +194,13 @@ export default {
 .toolbar {
   height: 40px;
   background: #f2f2f2;
+  text-align: start;
+  padding: 0px 20px;
+  line-height: 40px;
+}
+i {
+  margin: 0px 10px;
+  cursor: pointer;
 }
 .editor-area {
   background: #f2f2f2;
@@ -199,6 +222,6 @@ export default {
   height: 100%;
 }
 .CodeMirror {
-  height: 890px;
+  height: 890px !important;
 }
 </style>
