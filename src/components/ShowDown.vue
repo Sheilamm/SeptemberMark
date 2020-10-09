@@ -265,7 +265,8 @@ export default {
       } else if (type === 'unorderList') {
         newValue = value + ' - 无序列表';
       } else if (type === 'orderList') {
-        newValue = value + ' 1. 有序列表';
+        !isSelected && (newValue = value + ' 1. 有序列表1');
+        isSelected && this.addOrderList();
       } else if (type === 'form') {
         newValue =
           value +
@@ -284,7 +285,47 @@ row 2 col 1 | row 2 col 2`;
       newValue && this.editor.setValue(newValue);
     },
 
-    addOrderList() {},
+    addOrderList() {
+      const selectContent = this.editor.listSelections()[0]; // 第一个选中的文本
+      let { anchor, head } = selectContent;
+      head.line >= anchor.line &&
+        head.sticky === 'before' &&
+        ([head, anchor] = [anchor, head]);
+      let preLine = head.line;
+      let aftLine = anchor.line;
+      if (preLine !== aftLine) {
+        // 选中了多行，在每行前加上匹配字符
+        let preNumber = 0;
+        let pos = 0;
+        for (let i = preLine; i <= aftLine; i++) {
+          this.editor.setCursor({ line: i, ch: 0 });
+          const replaceStr = `${++preNumber}. `;
+          this.editor.replaceSelection(replaceStr);
+          if (i === aftLine) {
+            pos += (replaceStr + this.editor.getLine(i)).length;
+          }
+        }
+        this.editor.setCursor({ line: aftLine, ch: pos });
+        this.editor.focus();
+      } else {
+        const selectVal = this.editor.getSelection();
+        let preStr = this.editor.getRange({ line: preLine, ch: 0 }, head);
+        let preNumber = 0;
+        let preBlank = '';
+        if (/^( |\t)+/.test(preStr)) {
+          // 有序列表标识前也许会有空格或tab缩进
+          preBlank = preStr.match(/^( |\t)+/)[0];
+          preStr = preStr.trimLeft();
+        }
+        if (/^\d+(\.) /.test(preStr)) {
+          // 是否以'数字. '开头，找出前面的数字
+          preNumber = Number.parseInt(preStr.match(/^\d+/)[0]);
+        }
+        let replaceStr = `\n${preBlank}${preNumber + 1}. ${selectVal}\n`;
+        this.editor.replaceSelection(replaceStr);
+        this.editor.setCursor({ line: preLine + 1, ch: replaceStr.length });
+      }
+    },
 
     setState(matchStr) {
       const changePos = matchStr.length; // matchStr为传入参数，可以是'**','*','~~','`'或者其他符合markdown语法的字符串
@@ -383,6 +424,7 @@ i {
   /* height: 900px; */
   background: #fff;
   margin-left: 20px;
+  text-align: start;
 }
 .el-col {
   height: 890px;
