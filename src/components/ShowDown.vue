@@ -255,15 +255,18 @@ export default {
         !isSelected && (newValue = value + ' ==背景高亮==');
         isSelected && this.setState('==');
       } else if (type === 'H1') {
-        newValue = value + ' # 一级标题';
+        !isSelected && (newValue = value + ' # 一级标题');
+        isSelected && this.addUnorderList('# ');
       } else if (type === 'link') {
         newValue = value + '  [sobey](http://www.sobey.com)';
       } else if (type === 'quote') {
-        newValue = value + '  > 教程在哪?';
+        !isSelected && (newValue = value + '  > ');
+        isSelected && this.addUnorderList('> ');
       } else if (type === 'code') {
         // newValue = value + '```int a ```';
       } else if (type === 'unorderList') {
-        newValue = value + ' - 无序列表';
+        !isSelected && (newValue = value + ' - 无序列表');
+        isSelected && this.addUnorderList('- ');
       } else if (type === 'orderList') {
         !isSelected && (newValue = value + ' 1. 有序列表1');
         isSelected && this.addOrderList();
@@ -324,6 +327,41 @@ row 2 col 1 | row 2 col 2`;
         let replaceStr = `\n${preBlank}${preNumber + 1}. ${selectVal}\n`;
         this.editor.replaceSelection(replaceStr);
         this.editor.setCursor({ line: preLine + 1, ch: replaceStr.length });
+      }
+    },
+
+    addUnorderList(matchStr) {
+      const selectContent = this.editor.listSelections()[0]; // 第一个选中的文本
+      let { anchor, head } = selectContent;
+      head.line >= anchor.line &&
+        head.sticky === 'before' &&
+        ([head, anchor] = [anchor, head]);
+      let preLine = head.line;
+      let aftLine = anchor.line;
+      if (preLine !== aftLine) {
+        // 选中了多行，在每行前加上匹配字符
+        let pos = matchStr.length;
+        for (let i = preLine; i <= aftLine; i++) {
+          this.editor.setCursor({ line: i, ch: 0 });
+          this.editor.replaceSelection(matchStr);
+          i === aftLine && (pos += this.editor.getLine(i).length);
+        }
+        this.editor.setCursor({ line: aftLine, ch: pos });
+        this.editor.focus();
+      } else {
+        // 检测开头是否有匹配的字符串，有就将其删除
+        const preStr = this.editor.getRange({ line: preLine, ch: 0 }, head);
+        if (preStr === matchStr) {
+          this.editor.replaceRange('', { line: preLine, ch: 0 }, head);
+        } else {
+          const selectVal = this.editor.getSelection();
+          let replaceStr = `\n\n${matchStr}${selectVal}\n\n`;
+          this.editor.replaceSelection(replaceStr);
+          this.editor.setCursor({
+            line: preLine + 2,
+            ch: (matchStr + selectVal).length,
+          });
+        }
       }
     },
 
@@ -425,6 +463,7 @@ i {
   background: #fff;
   margin-left: 20px;
   text-align: start;
+  padding: 15px;
 }
 .el-col {
   height: 890px;
