@@ -285,7 +285,7 @@ row 2 col 1 | row 2 col 2`;
           ` ![GitHub set up](http://zh.mweb.im/asset/img/set-up-git.gif )`;
       }
 
-      newValue && this.editor.setValue(newValue);
+      (newValue || type === 'clear') && this.editor.setValue(newValue);
     },
 
     addOrderList() {
