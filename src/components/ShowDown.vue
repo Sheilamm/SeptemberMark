@@ -2,22 +2,67 @@
   <div class="markdown-editor">
     <!-- 工具栏 -->
     <div class="toolbar">
-      <i class="iconfont" title="粗体">&#xe61c;</i>
-      <i class="iconfont" title="斜体">&#xe614;</i>
-      <i class="iconfont" title="删除线">&#xe61b;</i>
-      <i class="iconfont" title="下划线">&#xe634;</i>
-      <i class="iconfont" title="标记">&#xe66a;</i>
-      <i class="iconfont" title="标题">&#xe645;</i>
-      <i class="iconfont" title="链接">&#xe625;</i>
-      <i class="iconfont" title="引用">&#xe697;</i>
-      <i class="iconfont" title="代码">&#xe610;</i>
-      <i class="iconfont" title="无序列表">&#xe82d;</i>
-      <i class="iconfont" title="有序列表">&#xe694;</i>
-      <i class="iconfont" title="表格">&#xe82f;</i>
-      <i class="iconfont" title="横线">&#xe600;</i>
-      <i class="iconfont" title="插入图片">&#xe82c;</i>
-      <i class="iconfont" title="插入分页符">&#xe646;</i>
-      <i class="iconfont" title="清除全部">&#xe82e;</i>
+      <i class="iconfont" title="粗体" @click="addSyntaxTemplate('bold')"
+        >&#xe61c;</i
+      >
+      <i class="iconfont" title="斜体" @click="addSyntaxTemplate('italics')"
+        >&#xe614;</i
+      >
+      <i
+        class="iconfont"
+        title="删除线"
+        @click="addSyntaxTemplate('strikethrough')"
+        >&#xe61b;</i
+      >
+      <i class="iconfont" title="下划线" @click="addSyntaxTemplate('underline')"
+        >&#xe634;</i
+      >
+      <i class="iconfont" title="标记" @click="addSyntaxTemplate('marker')"
+        >&#xe66a;</i
+      >
+
+      <i class="iconfont" title="标题" @click="addSyntaxTemplate('H1')"
+        >&#xe645;</i
+      >
+      <i class="iconfont" title="链接" @click="addSyntaxTemplate('link')"
+        >&#xe625;</i
+      >
+      <i class="iconfont" title="引用" @click="addSyntaxTemplate('quote')"
+        >&#xe697;</i
+      >
+      <i class="iconfont" title="代码" @click="addSyntaxTemplate('code')"
+        >&#xe610;</i
+      >
+      <i
+        class="iconfont"
+        title="无序列表"
+        @click="addSyntaxTemplate('unorderList')"
+        >&#xe82d;</i
+      >
+      <i
+        class="iconfont"
+        title="有序列表"
+        @click="addSyntaxTemplate('orderList')"
+        >&#xe694;</i
+      >
+      <i class="iconfont" title="表格" @click="addSyntaxTemplate('form')"
+        >&#xe82f;</i
+      >
+      <i class="iconfont" title="横线" @click="addSyntaxTemplate('line')"
+        >&#xe600;</i
+      >
+      <i class="iconfont" title="插入图片" @click="addSyntaxTemplate('image')"
+        >&#xe82c;</i
+      >
+      <i
+        class="iconfont"
+        title="插入分页符"
+        @click="addSyntaxTemplate('pagebreak')"
+        >&#xe646;</i
+      >
+      <i class="iconfont" title="清除全部" @click="addSyntaxTemplate('clear')"
+        >&#xe82e;</i
+      >
       <i class="iconfont" title="导出">&#xe6ad;</i>
     </div>
     <div class="editor-area">
@@ -111,7 +156,7 @@ export default {
           'CodeMirror-lint-markers',
         ],
 
-        lineWrapping: true, //代码折叠
+        lineWrapping: true,
         foldGutter: true,
 
         matchBrackets: true, //括号匹配
@@ -123,6 +168,11 @@ export default {
     this.editor = this.$refs.mytextarea.codemirror;
     this.editor.on('change', (cm) => {
       this.content = cm.getValue();
+    });
+    this.editor.setOption('extraKeys', {
+      'Alt-Q': (cm) => {
+        cm.execCommand('goLineLeftCmd');
+      },
     });
   },
   methods: {
@@ -183,21 +233,141 @@ export default {
         console.log(error);
       }
     },
+
+    addSyntaxTemplate(type) {
+      const isSelected = this.editor.somethingSelected();
+      const value = this.editor.getValue();
+      let newValue = '';
+
+      if (type === 'bold') {
+        !isSelected && (newValue = value + ' **粗体**');
+        isSelected && this.setState('**');
+      } else if (type === 'italics') {
+        !isSelected && (newValue = value + ' *斜体*');
+        isSelected && this.setState('*');
+      } else if (type === 'strikethrough') {
+        !isSelected && (newValue = value + ' ~~删除线~~');
+        isSelected && this.setState('~~');
+      } else if (type === 'underline') {
+        !isSelected && (newValue = value + ' ++下划线++');
+        isSelected && this.setState('++');
+      } else if (type === 'marker') {
+        !isSelected && (newValue = value + ' ==背景高亮==');
+        isSelected && this.setState('==');
+      } else if (type === 'H1') {
+        newValue = value + ' # 一级标题';
+      } else if (type === 'link') {
+        newValue = value + '  [sobey](http://www.sobey.com)';
+      } else if (type === 'quote') {
+        newValue = value + '  > 教程在哪?';
+      } else if (type === 'code') {
+        // newValue = value + '```int a ```';
+      } else if (type === 'unorderList') {
+        newValue = value + ' - 无序列表';
+      } else if (type === 'orderList') {
+        newValue = value + ' 1. 有序列表';
+      } else if (type === 'form') {
+        newValue =
+          value +
+          `header 1 | header 2
+---|---
+row 1 col 1 | row 1 col 2
+row 2 col 1 | row 2 col 2`;
+      } else if (type === 'line') {
+        newValue = value + ` -----------`;
+      } else if (type === 'image') {
+        newValue =
+          value +
+          ` ![GitHub set up](http://zh.mweb.im/asset/img/set-up-git.gif )`;
+      }
+
+      newValue && this.editor.setValue(newValue);
+    },
+
+    addOrderList() {},
+
+    setState(matchStr) {
+      const changePos = matchStr.length; // matchStr为传入参数，可以是'**','*','~~','`'或者其他符合markdown语法的字符串
+      let preAlready = false,
+        aftAlready = false;
+
+      // 如果选中了文本
+      const selectContent = this.editor.listSelections()[0]; // 第一个选中的文本
+      let { anchor, head } = selectContent; // 前后光标位置
+      head.line >= anchor.line &&
+        head.sticky === 'before' &&
+        ([head, anchor] = [anchor, head]);
+      let { line: preLine, ch: prePos } = head;
+      let { line: aftLine, ch: aftPos } = anchor;
+      // 判断前后是否有matchStr
+      this.editor.getRange({ line: preLine, ch: prePos - changePos }, head) ===
+        matchStr && (preAlready = true);
+      this.editor.getRange(anchor, {
+        line: aftLine,
+        ch: aftPos + changePos,
+      }) === matchStr && (aftAlready = true);
+      // 去除前后的matchStr
+      aftAlready &&
+        this.editor.replaceRange('', anchor, {
+          line: aftLine,
+          ch: aftPos + changePos,
+        });
+      preAlready &&
+        this.editor.replaceRange(
+          '',
+          { line: preLine, ch: prePos - changePos },
+          head,
+        );
+      if (!preAlready && !aftAlready) {
+        // 前后都没有matchStr
+        this.editor.setCursor(anchor);
+        this.editor.replaceSelection(matchStr);
+        this.editor.setCursor(head);
+        this.editor.replaceSelection(matchStr);
+        prePos += changePos;
+        aftPos += aftLine === preLine ? changePos : 0;
+        this.editor.setSelection(
+          { line: aftLine, ch: aftPos },
+          { line: preLine, ch: prePos },
+        );
+      } else if (!preAlready) {
+        // 只有后面有matchStr
+        this.editor.setCursor(head);
+        this.editor.replaceSelection(matchStr);
+        prePos += changePos;
+        aftPos += aftLine === preLine ? changePos : 0;
+        this.editor.setSelection(
+          { line: aftLine, ch: aftPos },
+          { line: preLine, ch: prePos },
+        );
+      } else if (!aftAlready) {
+        // 只有前面有matchStr
+        this.editor.setCursor({ line: aftLine, ch: aftPos - changePos });
+        this.editor.replaceSelection(matchStr);
+        prePos -= changePos;
+        aftPos -= aftLine === preLine ? changePos : 0;
+        this.editor.setSelection(
+          { line: aftLine, ch: aftPos },
+          { line: preLine, ch: prePos },
+        );
+      }
+      this.editor.focus();
+    },
   },
 };
 </script>
 
 <style>
-/* .markdown-editor {
-  height: 1080px;
-} */
 .toolbar {
   height: 40px;
   background: #f2f2f2;
   text-align: start;
   padding: 0px 20px;
   line-height: 40px;
+  position: relative;
+  text-align: start;
 }
+
 i {
   margin: 0px 10px;
   cursor: pointer;
@@ -223,5 +393,6 @@ i {
 }
 .CodeMirror {
   height: 890px !important;
+  text-align: start;
 }
 </style>
