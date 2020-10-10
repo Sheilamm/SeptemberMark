@@ -210,7 +210,7 @@ export default {
       } else if (value === 'word') {
         this.downloadWord('a');
       } else if (value === 'markdown') {
-        this.downloadMD('a.md');
+        this.downloadMD('a.md', this.content);
       } else {
         this.downloadHtml('a.html');
       }
@@ -267,10 +267,10 @@ export default {
       });
     },
 
-    downloadMD(fileName) {
+    downloadMD(fileName, content) {
       const urlObject = window.URL || window.webkitURL || window;
 
-      const blob = new Blob([this.content]);
+      const blob = new Blob([content]);
       let save_link = document.createElementNS(
         'http://www.w3.org/1999/xhtml',
         'a',
@@ -299,8 +299,28 @@ export default {
       save_link.dispatchEvent(ev);
     },
 
-    downloadHtml() {
-      console.log('下载为html文件');
+    downloadHtml(fileName) {
+      const div = document.querySelector('.md-body');
+      const o = document.createElement('div');
+      o.appendChild(div);
+
+      const htmlString = o.innerHTML;
+
+      const preHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body`;
+      const tailHtml = `</body>
+</html>`;
+
+      const content = preHtml + htmlString + tailHtml;
+      console.log(content);
+
+      // const blob = new Blob([content]);
+      this.downloadMD(fileName, content);
     },
 
     addSyntaxTemplate(type) {
