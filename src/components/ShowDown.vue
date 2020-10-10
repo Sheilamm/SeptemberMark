@@ -156,6 +156,8 @@ import 'codemirror/addon/fold/foldgutter.js';
 import 'codemirror/addon/fold/indent-fold.js';
 import 'codemirror/addon/fold/markdown-fold.js';
 
+import { exportWord } from 'mhtml-to-word';
+
 export default {
   components: {
     MarkdownItVue,
@@ -213,7 +215,7 @@ export default {
       if (value === 'pdf') {
         this.downloadPdf('a.pdf');
       } else if (value === 'word') {
-        // this.downloadWord()
+        this.downloadWord('a');
       } else if (value === 'markdown') {
         // this.downloadMK()
       } else {
@@ -272,6 +274,13 @@ export default {
       } catch (error) {
         console.log(error);
       }
+    },
+
+    downloadWord(fileName) {
+      exportWord({
+        selector: '.md-body',
+        filename: fileName,
+      });
     },
 
     addSyntaxTemplate(type) {
@@ -472,8 +481,6 @@ row 2 col 1 | row 2 col 2`;
       }
       this.editor.focus();
     },
-  
-    
   },
 };
 </script>
@@ -507,6 +514,7 @@ i {
   margin-left: 20px;
   text-align: start;
   padding: 15px;
+  overflow-y: auto;
 }
 .el-col {
   height: 890px;
