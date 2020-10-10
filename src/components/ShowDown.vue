@@ -206,27 +206,18 @@ export default {
   methods: {
     exportFile(value) {
       if (value === 'pdf') {
-        this.downloadPdf('a.pdf');
+        this.downloadPdf('a');
       } else if (value === 'word') {
         this.downloadWord('a');
       } else if (value === 'markdown') {
-        // this.downloadMK()
+        this.downloadMD('a.md');
       } else {
-        // this.downloadHtml()
+        this.downloadHtml('a.html');
       }
     },
 
-    downloadFile(fileName, content) {
-      const aLink = document.createElement('a');
-      const blob = new Blob([content]);
-      // const evt = document.createEvent('HTMLEvents');
-      aLink.download = fileName;
-      aLink.href = URL.createObjectURL(blob);
-      aLink.click();
-    },
-
     downloadPdf(fileName) {
-      const el = document.querySelector('.markdown-body');
+      const el = document.querySelector('.md-body');
       try {
         html2canvas(el).then((canvas) => {
           const contentWidth = canvas.width;
@@ -274,6 +265,42 @@ export default {
         selector: '.md-body',
         filename: fileName,
       });
+    },
+
+    downloadMD(fileName) {
+      const urlObject = window.URL || window.webkitURL || window;
+
+      const blob = new Blob([this.content]);
+      let save_link = document.createElementNS(
+        'http://www.w3.org/1999/xhtml',
+        'a',
+      );
+      save_link.href = urlObject.createObjectURL(blob);
+      save_link.download = fileName;
+
+      const ev = document.createEvent('MouseEvents');
+      ev.initMouseEvent(
+        'click',
+        true,
+        false,
+        window,
+        0,
+        0,
+        0,
+        0,
+        0,
+        false,
+        false,
+        false,
+        false,
+        0,
+        null,
+      );
+      save_link.dispatchEvent(ev);
+    },
+
+    downloadHtml() {
+      console.log('下载为html文件');
     },
 
     addSyntaxTemplate(type) {
