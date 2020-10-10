@@ -170,7 +170,6 @@ export default {
       cmOptions: {
         tabSize: 4,
         indentUnit: 2,
-
         theme: '3024-night',
         mode: 'text/x-markdown',
         highlightFormatting: true,
@@ -178,22 +177,16 @@ export default {
         xml: true,
         fencedCodeBlockHighlighting: true,
         allowAtxHeaderWithoutSpace: true,
-
         lineNumbers: true,
-
         line: true,
-
         foldgutter: true,
-
         gutters: [
           'CodeMirror-linenumbers',
           'CodeMirror-foldgutter',
           'CodeMirror-lint-markers',
         ],
-
         lineWrapping: true,
         foldGutter: true,
-
         matchBrackets: true, //括号匹配
         autoCloseBrackets: true,
       },
