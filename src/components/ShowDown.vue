@@ -2,68 +2,101 @@
   <div class="markdown-editor">
     <!-- 工具栏 -->
     <div class="toolbar">
-      <i class="iconfont" title="粗体" @click="addSyntaxTemplate('bold')"
-        >&#xe61c;</i
-      >
-      <i class="iconfont" title="斜体" @click="addSyntaxTemplate('italics')"
-        >&#xe614;</i
-      >
-      <i
-        class="iconfont"
-        title="删除线"
-        @click="addSyntaxTemplate('strikethrough')"
-        >&#xe61b;</i
-      >
-      <i class="iconfont" title="下划线" @click="addSyntaxTemplate('underline')"
-        >&#xe634;</i
-      >
-      <i class="iconfont" title="标记" @click="addSyntaxTemplate('marker')"
-        >&#xe66a;</i
-      >
+      <div>
+        <i class="iconfont" title="粗体" @click="addSyntaxTemplate('bold')"
+          >&#xe61c;</i
+        >
+        <i class="iconfont" title="斜体" @click="addSyntaxTemplate('italics')"
+          >&#xe614;</i
+        >
+        <i
+          class="iconfont"
+          title="删除线"
+          @click="addSyntaxTemplate('strikethrough')"
+          >&#xe61b;</i
+        >
+        <i
+          class="iconfont"
+          title="下划线"
+          @click="addSyntaxTemplate('underline')"
+          >&#xe634;</i
+        >
+        <i class="iconfont" title="标记" @click="addSyntaxTemplate('marker')"
+          >&#xe66a;</i
+        >
 
-      <i class="iconfont" title="标题" @click="addSyntaxTemplate('H1')"
-        >&#xe645;</i
-      >
-      <i class="iconfont" title="链接" @click="addSyntaxTemplate('link')"
-        >&#xe625;</i
-      >
-      <i class="iconfont" title="引用" @click="addSyntaxTemplate('quote')"
-        >&#xe697;</i
-      >
-      <i class="iconfont" title="代码" @click="addSyntaxTemplate('code')"
-        >&#xe610;</i
-      >
-      <i
-        class="iconfont"
-        title="无序列表"
-        @click="addSyntaxTemplate('unorderList')"
-        >&#xe82d;</i
-      >
-      <i
-        class="iconfont"
-        title="有序列表"
-        @click="addSyntaxTemplate('orderList')"
-        >&#xe694;</i
-      >
-      <i class="iconfont" title="表格" @click="addSyntaxTemplate('form')"
-        >&#xe82f;</i
-      >
-      <i class="iconfont" title="横线" @click="addSyntaxTemplate('line')"
-        >&#xe600;</i
-      >
-      <i class="iconfont" title="插入图片" @click="addSyntaxTemplate('image')"
-        >&#xe82c;</i
-      >
-      <i
-        class="iconfont"
-        title="插入分页符"
-        @click="addSyntaxTemplate('pagebreak')"
-        >&#xe646;</i
-      >
-      <i class="iconfont" title="清除全部" @click="addSyntaxTemplate('clear')"
-        >&#xe82e;</i
-      >
-      <i class="iconfont" title="导出">&#xe6ad;</i>
+        <i class="iconfont" title="标题" @click="addSyntaxTemplate('H1')"
+          >&#xe645;</i
+        >
+        <i class="iconfont" title="链接" @click="addSyntaxTemplate('link')"
+          >&#xe625;</i
+        >
+        <i class="iconfont" title="引用" @click="addSyntaxTemplate('quote')"
+          >&#xe697;</i
+        >
+        <i class="iconfont" title="代码" @click="addSyntaxTemplate('code')"
+          >&#xe610;</i
+        >
+        <i
+          class="iconfont"
+          title="无序列表"
+          @click="addSyntaxTemplate('unorderList')"
+          >&#xe82d;</i
+        >
+        <i
+          class="iconfont"
+          title="有序列表"
+          @click="addSyntaxTemplate('orderList')"
+          >&#xe694;</i
+        >
+        <i class="iconfont" title="表格" @click="addSyntaxTemplate('form')"
+          >&#xe82f;</i
+        >
+        <i class="iconfont" title="横线" @click="addSyntaxTemplate('line')"
+          >&#xe600;</i
+        >
+        <i class="iconfont" title="插入图片" @click="addSyntaxTemplate('image')"
+          >&#xe82c;</i
+        >
+        <i
+          class="iconfont"
+          title="插入分页符"
+          @click="addSyntaxTemplate('pagebreak')"
+          >&#xe646;</i
+        >
+        <i class="iconfont" title="清除全部" @click="addSyntaxTemplate('clear')"
+          >&#xe82e;</i
+        >
+      </div>
+      <div>
+        <el-dropdown
+          trigger="click"
+          :hide-on-click="false"
+          @command="exportFile"
+        >
+          <span class="el-dropdown-link">
+            导出为
+          </span>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item command="pdf">
+              <i class="iconfont" style="color:#f40757">&#xe62d;</i>
+              PDF</el-dropdown-item
+            >
+            <el-dropdown-item command="word"
+              ><i class="iconfont" style="color:#0b5bea">&#xe67a;</i
+              >word</el-dropdown-item
+            >
+            <el-dropdown-item command="markdown"
+              ><i class="iconfont" style="color:#1aaba8">&#xe625;</i
+              >markdown</el-dropdown-item
+            >
+            <el-dropdown-item command="html"
+              ><i class="iconfont" style="color:#ba410e">&#xe620;</i
+              >HTML</el-dropdown-item
+            >
+          </el-dropdown-menu>
+        </el-dropdown>
+      </div>
     </div>
     <div class="editor-area">
       <el-row>
@@ -176,8 +209,16 @@ export default {
     });
   },
   methods: {
-    exportFile() {
-      this.downloadPdf('a.pdf');
+    exportFile(value) {
+      if (value === 'pdf') {
+        this.downloadPdf('a.pdf');
+      } else if (value === 'word') {
+        // this.downloadWord()
+      } else if (value === 'markdown') {
+        // this.downloadMK()
+      } else {
+        // this.downloadHtml()
+      }
     },
 
     downloadFile(fileName, content) {
@@ -193,23 +234,22 @@ export default {
       const el = document.querySelector('.markdown-body');
       try {
         html2canvas(el).then((canvas) => {
-          var contentWidth = canvas.width;
-          var contentHeight = canvas.height;
+          const contentWidth = canvas.width;
+          const contentHeight = canvas.height;
 
           //一页pdf显示html页面生成的canvas高度;
-          var pageHeight = (contentWidth / 592.28) * 841.89;
+          const pageHeight = (contentWidth / 592.28) * 841.89;
           //未生成pdf的html页面高度
-          var leftHeight = contentHeight;
+          let leftHeight = contentHeight;
           //页面偏移
-          var position = 0;
+          let position = 0;
           //a4纸的尺寸[595.28,841.89]，html页面生成的canvas在pdf中图片的宽高
-          var imgWidth = 595.28;
-          var imgHeight = (592.28 / contentWidth) * contentHeight;
+          const imgWidth = 595.28;
+          const imgHeight = (592.28 / contentWidth) * contentHeight;
 
-          var pageData = canvas.toDataURL('image/jpeg', 1.0);
-          console.log(pageData);
+          const pageData = canvas.toDataURL('image/jpeg', 1.0);
 
-          var pdf = new jsPDF('', 'pt', 'a4');
+          const pdf = new jsPDF('', 'pt', 'a4');
 
           //有两个高度需要区分，一个是html页面的实际高度，和生成pdf的页面高度(841.89)
           //当内容未超过pdf一页显示的范围，无需分页
@@ -432,6 +472,8 @@ row 2 col 1 | row 2 col 2`;
       }
       this.editor.focus();
     },
+  
+    
   },
 };
 </script>
@@ -443,8 +485,9 @@ row 2 col 1 | row 2 col 2`;
   text-align: start;
   padding: 0px 20px;
   line-height: 40px;
-  position: relative;
   text-align: start;
+  display: flex;
+  justify-content: space-between;
 }
 
 i {
@@ -475,5 +518,9 @@ i {
 .CodeMirror {
   height: 890px !important;
   text-align: start;
+}
+.el-dropdown-link {
+  font-family: 'Times New Roman', Times, serif;
+  cursor: pointer;
 }
 </style>
