@@ -206,7 +206,7 @@ export default {
   methods: {
     exportFile(value) {
       if (value === 'pdf') {
-        this.downloadPdf('a');
+        this.makeMpdf('a.pdf');
       } else if (value === 'word') {
         this.downloadWord('a');
       } else if (value === 'markdown') {
@@ -217,47 +217,105 @@ export default {
     },
 
     downloadPdf(fileName) {
-      const el = document.querySelector('.md-body');
-      try {
-        html2canvas(el).then((canvas) => {
-          const contentWidth = canvas.width;
-          const contentHeight = canvas.height;
+      const el = document.querySelector('.markdown-body');
 
-          //一页pdf显示html页面生成的canvas高度;
-          const pageHeight = (contentWidth / 592.28) * 841.89;
-          //未生成pdf的html页面高度
-          let leftHeight = contentHeight;
-          //页面偏移
-          let position = 0;
-          //a4纸的尺寸[595.28,841.89]，html页面生成的canvas在pdf中图片的宽高
-          const imgWidth = 595.28;
-          const imgHeight = (592.28 / contentWidth) * contentHeight;
+      html2canvas(el, {
+        useCORS: false,
+        allowTaint: false,
+        logging: true,
+      }).then((canvas) => {
+        const contentWidth = canvas.width;
+        const contentHeight = canvas.height;
 
-          const pageData = canvas.toDataURL('image/jpeg', 1.0);
+        //一页pdf显示html页面生成的canvas高度;
+        const pageHeight = (contentWidth / 592.28) * 841.89;
+        //未生成pdf的html页面高度
+        let leftHeight = contentHeight;
+        //页面偏移
+        let position = 0;
+        //a4纸的尺寸[595.28,841.89]，html页面生成的canvas在pdf中图片的宽高
+        const imgWidth = 595.28;
+        const imgHeight = (592.28 / contentWidth) * contentHeight;
 
-          const pdf = new jsPDF('', 'pt', 'a4');
+        const pageData = canvas.toDataURL('image/jpeg', 1.0);
 
-          //有两个高度需要区分，一个是html页面的实际高度，和生成pdf的页面高度(841.89)
-          //当内容未超过pdf一页显示的范围，无需分页
-          if (leftHeight < pageHeight) {
-            pdf.addImage(pageData, 'JPEG', 0, 0, imgWidth, imgHeight);
-          } else {
-            while (leftHeight > 0) {
-              pdf.addImage(pageData, 'JPEG', 0, position, imgWidth, imgHeight);
-              leftHeight -= pageHeight;
-              position -= 841.89;
-              //避免添加空白页
-              if (leftHeight > 0) {
-                pdf.addPage();
-              }
+        const pdf = new jsPDF('', 'pt', 'a4');
+
+        //有两个高度需要区分，一个是html页面的实际高度，和生成pdf的页面高度(841.89)
+        //当内容未超过pdf一页显示的范围，无需分页
+        if (leftHeight < pageHeight) {
+          pdf.addImage({
+            imageData: pageData,
+            angle: -20,
+            x: 10,
+            y: 40,
+            w: imgWidth,
+            h: imgHeight,
+          });
+        } else {
+          while (leftHeight > 0) {
+            pdf.addImage(pageData, 'JPEG', 0, position, imgWidth, imgHeight);
+            leftHeight -= pageHeight;
+            position -= 841.89;
+            //避免添加空白页
+            if (leftHeight > 0) {
+              pdf.addPage();
             }
           }
+        }
 
-          pdf.save(fileName);
-        });
-      } catch (error) {
-        console.log(error);
-      }
+        pdf.save(fileName);
+      });
+    },
+
+    makeMpdf(fileName) {
+      const element = document.querySelector('.md-body');
+      html2canvas(element, {
+        useCORS: true,
+        logging: false,
+        allowTaint: true,
+        taintTest: true,
+        timeout: 500,
+      }).then((canvas) => {
+        const pdf = new jsPDF('p', 'mm', 'a4'); //A4纸，纵向
+        const ctx = canvas.getContext('2d'),
+          a4w = 190,
+          a4h = 277, //A4大小，210mm x 297mm，四边各保留10mm的边距，显示区域190x277
+          imgHeight = Math.floor((a4h * canvas.width) / a4w); //按A4显示比例换算一页图像的像素高度
+        let renderedHeight = 0;
+
+        while (renderedHeight < canvas.height) {
+          const page = document.createElement('canvas');
+          page.width = canvas.width;
+          page.height = Math.min(imgHeight, canvas.height - renderedHeight); //可能内容不足一页
+
+          //用getImageData剪裁指定区域，并画到前面创建的canvas对象中
+          page
+            .getContext('2d')
+            .putImageData(
+              ctx.getImageData(
+                0,
+                renderedHeight,
+                canvas.width,
+                Math.min(imgHeight, canvas.height - renderedHeight),
+              ),
+              0,
+              0,
+            );
+          pdf.addImage(
+            page.toDataURL('image/jpeg', 1.0),
+            'JPEG',
+            10,
+            10,
+            a4w,
+            Math.min(a4h, (a4w * page.height) / page.width),
+          ); //添加图像到页面，保留10mm边距
+
+          renderedHeight += imgHeight;
+          if (renderedHeight < canvas.height) pdf.addPage(); //如果后面还有内容，添加一个空页
+        }
+        pdf.save(fileName);
+      });
     },
 
     downloadWord(fileName) {
@@ -317,7 +375,6 @@ export default {
 </html>`;
 
       const content = preHtml + htmlString + tailHtml;
-      console.log(content);
 
       // const blob = new Blob([content]);
       this.downloadMD(fileName, content);
@@ -372,6 +429,8 @@ row 2 col 1 | row 2 col 2`;
         newValue =
           value +
           ` ![GitHub set up](http://zh.mweb.im/asset/img/set-up-git.gif )`;
+      } else if (type === 'pagebreak') {
+        newValue = value + `[========]`;
       }
 
       (newValue || type === 'clear') && this.editor.setValue(newValue);
@@ -570,5 +629,8 @@ i {
 .el-dropdown-link {
   font-family: 'Times New Roman', Times, serif;
   cursor: pointer;
+}
+.markdown-body {
+  padding: 10px;
 }
 </style>
