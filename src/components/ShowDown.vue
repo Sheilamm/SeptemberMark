@@ -270,12 +270,11 @@ export default {
 
     makeMpdf(fileName) {
       const element = document.querySelector('.markdown-body');
+
       html2canvas(element, {
-        useCORS: true,
-        logging: false,
-        allowTaint: true,
-        taintTest: true,
-        timeout: 500,
+        // useCORS: true,
+        logging: true,
+        // allowTaint: true
       }).then((canvas) => {
         const pdf = new jsPDF('p', 'mm', 'a4');
         const ctx = canvas.getContext('2d'),
@@ -283,8 +282,6 @@ export default {
           a4h = 277, //A4大小，210mm x 297mm，四边各保留10mm的边距，显示区域190x277
           imgHeight = Math.floor((a4h * canvas.width) / a4w); //按A4显示比例换算一页图像的像素高度
         let renderedHeight = 0;
-
-        
 
         while (renderedHeight < canvas.height) {
           const page = document.createElement('canvas');
