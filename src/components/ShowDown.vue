@@ -107,7 +107,6 @@
         <el-col :span="12">
           <div class="md-body">
             <markdown-it-vue :content="content" />
-            <img src="@/assets/logo.png" alt="" />
           </div>
         </el-col>
       </el-row>
