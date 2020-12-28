@@ -77,24 +77,22 @@
           :hide-on-click="false"
           @command="exportFile"
         >
-          <span class="el-dropdown-link">
-            导出为
-          </span>
+          <span class="el-dropdown-link"> 导出为 </span>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item command="pdf">
-              <i class="iconfont" style="color:#f40757">&#xe62d;</i>
+              <i class="iconfont" style="color: #f40757">&#xe62d;</i>
               PDF</el-dropdown-item
             >
             <el-dropdown-item command="word"
-              ><i class="iconfont" style="color:#0b5bea">&#xe67a;</i
+              ><i class="iconfont" style="color: #0b5bea">&#xe67a;</i
               >word</el-dropdown-item
             >
             <el-dropdown-item command="markdown"
-              ><i class="iconfont" style="color:#1aaba8">&#xe625;</i
+              ><i class="iconfont" style="color: #1aaba8">&#xe625;</i
               >markdown</el-dropdown-item
             >
             <el-dropdown-item command="html"
-              ><i class="iconfont" style="color:#ba410e">&#xe620;</i
+              ><i class="iconfont" style="color: #ba410e">&#xe620;</i
               >HTML</el-dropdown-item
             >
           </el-dropdown-menu>
@@ -118,12 +116,6 @@
 </template>
 
 <script>
-import MarkdownItVue from "markdown-it-vue";
-import "markdown-it-vue/dist/markdown-it-vue.css";
-import { jsPDF } from "jspdf";
-import html2canvas from "html2canvas";
-import { codemirror } from "vue-codemirror";
-
 import "codemirror/mode/markdown/markdown.js";
 
 import "codemirror/theme/3024-night.css";
@@ -161,6 +153,11 @@ import "codemirror/addon/fold/foldcode.js";
 import "codemirror/addon/fold/foldgutter.js";
 import "codemirror/addon/fold/indent-fold.js";
 import "codemirror/addon/fold/markdown-fold.js";
+import MarkdownItVue from "markdown-it-vue";
+import "markdown-it-vue/dist/markdown-it-vue.css";
+import { jsPDF } from "jspdf";
+import html2canvas from "html2canvas";
+import { codemirror } from "vue-codemirror";
 
 import htmlDocx from "html-docx-js/dist/html-docx";
 import { saveAs } from "file-saver";
@@ -170,6 +167,7 @@ export default {
     MarkdownItVue,
     codemirror,
   },
+
   data() {
     return {
       content: "",
@@ -212,6 +210,10 @@ export default {
     });
   },
   methods: {
+    doChange() {
+      this.$emit("contentChange", this.pfoo);
+    },
+
     exportFile(value) {
       if (value === "pdf") {
         this.makeMpdf("a.pdf");
@@ -329,7 +331,7 @@ export default {
 
       const ctx = canvas.getContext("2d");
 
-      [].forEach.call(regularImages, function(img) {
+      [].forEach.call(regularImages, function (img) {
         canvas.width = img.width;
         canvas.height = img.height;
 
@@ -633,6 +635,11 @@ row 2 col 1 | row 2 col 2`;
         );
       }
       this.editor.focus();
+    },
+  },
+  watch: {
+    content(val) {
+      this.$emit("input", val);
     },
   },
 };

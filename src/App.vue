@@ -1,19 +1,21 @@
 <template>
   <div id="app">
-    <!-- <MavonEditor /> -->
-    <ShowDown />
+    <ShowDown v-model="value" />
   </div>
 </template>
 
 <script>
-// import MavonEditor from './components/MavonEditor.vue';
-import ShowDown from './components/ShowDown.vue';
+import ShowDown from "./components/ShowDown.vue";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    // MavonEditor,
     ShowDown,
+  },
+  data() {
+    return {
+      value: "",
+    };
   },
 };
 </script>
