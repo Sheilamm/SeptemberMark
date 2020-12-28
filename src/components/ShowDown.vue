@@ -109,6 +109,7 @@
         <el-col :span="12">
           <div class="md-body">
             <markdown-it-vue :content="content" />
+            <img src="@/assets/logo.png" alt="" />
           </div>
         </el-col>
       </el-row>
@@ -324,16 +325,35 @@ export default {
         pdf.save(fileName);
       });
     },
+    convertImagesToBase64() {
+      const regularImages = document.querySelectorAll("img");
+      const canvas = document.createElement("canvas");
+
+      const ctx = canvas.getContext("2d");
+
+      [].forEach.call(regularImages, function(img) {
+        canvas.width = img.width;
+        canvas.height = img.height;
+
+        ctx.drawImage(img, 0, 0, img.width, img.height); //使用画布画图
+
+        var dataURL = canvas.toDataURL("image/png", 1.0);
+        img.src = dataURL;
+      });
+      canvas.remove();
+    },
 
     async downloadWord() {
+      this.convertImagesToBase64();
+
       const svgElements = document.getElementsByTagName("svg");
       if (svgElements.length) {
         for (let index = 0; index < svgElements.length; index++) {
           const e = svgElements[index];
-          const canvas = await html2canvas(e.parentNode);
+          const canvas1 = await html2canvas(e.parentNode);
 
           const img = new Image();
-          img.src = canvas.toDataURL();
+          img.src = canvas1.toDataURL();
           e.parentNode.replaceChild(img, e);
         }
       }
