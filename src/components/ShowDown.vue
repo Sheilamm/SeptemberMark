@@ -162,8 +162,6 @@ import "codemirror/addon/fold/foldgutter.js";
 import "codemirror/addon/fold/indent-fold.js";
 import "codemirror/addon/fold/markdown-fold.js";
 
-// import { exportWord } from "mhtml-to-word";
-// import HTMLtoDOCX from "html-to-docx";
 import htmlDocx from "html-docx-js/dist/html-docx";
 import { saveAs } from "file-saver";
 
