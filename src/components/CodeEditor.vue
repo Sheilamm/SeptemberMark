@@ -6,54 +6,10 @@
 </template>
 
 <script>
-import { CodeMirror } from 'vue-codemirror';
-// language
-import 'codemirror/mode/python/python.js';
-import 'codemirror/mode/javascript/javascript.js';
-import 'codemirror/mode/sql/sql.js';
-// theme css
-import 'codemirror/theme/base16-light.css';
-import 'codemirror/theme/monokai.css';
-import 'codemirror/theme/solarized.css';
-
-// hint
-import 'codemirror/addon/hint/show-hint.js';
-import 'codemirror/addon/hint/show-hint.css';
-import 'codemirror/addon/hint/javascript-hint.js';
-import 'codemirror/addon/selection/active-line.js';
-// highlightSelectionMatches
-import 'codemirror/addon/scroll/annotatescrollbar.js';
-import 'codemirror/addon/search/matchesonscrollbar.js';
-import 'codemirror/addon/search/searchcursor.js';
-import 'codemirror/addon/search/match-highlighter.js';
-
-// require active-line.js
-import 'codemirror/addon/selection/active-line.js';
-// closebrackets
-import 'codemirror/addon/edit/closebrackets.js';
-// keyMap
-import 'codemirror/mode/clike/clike.js';
-import 'codemirror/addon/edit/matchbrackets.js';
-import 'codemirror/addon/comment/comment.js';
-import 'codemirror/addon/dialog/dialog.js';
-import 'codemirror/addon/dialog/dialog.css';
-import 'codemirror/addon/search/searchcursor.js';
-import 'codemirror/addon/search/search.js';
-import 'codemirror/keymap/emacs.js';
-import 'codemirror/keymap/sublime.js';
-
-// foldGutter
-import 'codemirror/addon/fold/foldgutter.css';
-import 'codemirror/addon/fold/brace-fold.js';
-import 'codemirror/addon/fold/comment-fold.js';
-import 'codemirror/addon/fold/foldcode.js';
-import 'codemirror/addon/fold/foldgutter.js';
-import 'codemirror/addon/fold/indent-fold.js';
-import 'codemirror/addon/fold/markdown-fold.js';
-import 'codemirror/addon/fold/xml-fold.js';
+import { CodeMirror } from "vue-codemirror";
 
 export default {
-  name: 'codemirror-edit',
+  name: "codemirror-edit",
   props: {
     option: {
       type: Object,
@@ -75,9 +31,9 @@ export default {
         styleSelectedText: true,
         line: true,
         foldGutter: true,
-        gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
+        gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
         highlightSelectionMatches: { showToken: /\w/, annotateScrollbar: true },
-        mode: 'text/x-mysql',
+        mode: "text/x-mysql",
         // hint.js options
         hintOptions: {
           // 当匹配只有一项的时候是否自动补全
@@ -86,13 +42,13 @@ export default {
         //快捷键 可提供三种模式 sublime、emacs、vim
         matchBrackets: true,
         showCursorWhenSelecting: true,
-        keyMap: 'emacs',
-        theme: 'solarized light',
-        extraKeys: { 'Alt-/': 'autocomplete' },
+        keyMap: "emacs",
+        theme: "solarized light",
+        extraKeys: { "Alt-/": "autocomplete" },
         autocorrect: true,
         spellcheck: true,
       },
-      code: '',
+      code: "",
       editor: null,
     };
   },
@@ -104,8 +60,8 @@ export default {
     init() {
       this.editor = CodeMirror.fromTextArea(this.$refs.textarea, this.cmOption);
 
-      this.editor.setOption('extraKeys', {
-        'Ctrl-V': (cm) => {
+      this.editor.setOption("extraKeys", {
+        "Ctrl-V": (cm) => {
           navigator.clipboard
             .readText()
             .then((v) => {
@@ -113,24 +69,24 @@ export default {
               this.initCodeVaule(value);
             })
             .catch((v) => {
-              console.log('获取剪贴板失败: ', v);
+              console.log("获取剪贴板失败: ", v);
             });
         },
-        'Ctrl-A': (cm) => {
-          cm.execCommand('selectAll');
+        "Ctrl-A": (cm) => {
+          cm.execCommand("selectAll");
         },
         Tab: (cm) => {
-          const spaces = Array(cm.getOption('indentUnit') + 1).join(' ');
+          const spaces = Array(cm.getOption("indentUnit") + 1).join(" ");
           cm.replaceSelection(spaces);
         },
       });
 
-      this.editor.on('change', (coder) => {
+      this.editor.on("change", (coder) => {
         this.code = coder.getValue();
       });
 
-      this.editor.on('blur', () => {
-        this.$emit('update:value', this.code);
+      this.editor.on("blur", () => {
+        this.$emit("update:value", this.code);
       });
 
       if (this.value) {
@@ -153,8 +109,8 @@ export default {
 
     setCodemirrorOption(options) {
       Object.keys(options).forEach((key) => {
-        if (key === 'readOnly' && options[key]) {
-          this.editor.setOption('readOnly', 'nocursor');
+        if (key === "readOnly" && options[key]) {
+          this.editor.setOption("readOnly", "nocursor");
         } else {
           this.editor.setOption(`${key}`, options[key]);
         }
@@ -162,7 +118,7 @@ export default {
     },
 
     setCodeMirrorSize(height) {
-      this.editor && this.editor.setSize('100%', height);
+      this.editor && this.editor.setSize("100%", height);
     },
 
     // hintOptions() {
