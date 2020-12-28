@@ -106,8 +106,10 @@
         <el-col :span="12">
           <codemirror ref="mytextarea" :options="cmOptions"></codemirror>
         </el-col>
-        <el-col :span="12" class="md-body">
-          <markdown-it-vue :content="content" />
+        <el-col :span="12">
+          <div class="md-body">
+            <markdown-it-vue :content="content" />
+          </div>
         </el-col>
       </el-row>
     </div>
@@ -323,24 +325,24 @@ export default {
       });
     },
 
-    downloadWord() {
-      const svgElements = document.querySelectorAll("svg");
+    async downloadWord() {
+      const svgElements = document.getElementsByTagName("svg");
       if (svgElements.length) {
-        svgElements.forEach(async (e) => {
+        for (let index = 0; index < svgElements.length; index++) {
+          const e = svgElements[index];
           const canvas = await html2canvas(e.parentNode);
+
           const img = new Image();
           img.src = canvas.toDataURL();
-          console.log(img);
-
-          // console.log(e.parentNode.innerHTML);
-        });
+          e.parentNode.replaceChild(img, e);
+        }
       }
 
       //将html转成blob
-      const o = document.createElement("div");
       const html = document.querySelector(".md-body");
-      o.appendChild(html);
-      const htmlString = o.innerHTML;
+
+      const htmlString = html.innerHTML;
+
       const content = `
         <!DOCTYPE html>
         <html lang="en">
@@ -642,7 +644,7 @@ i {
   display: flex;
 }
 .md-body {
-  /* height: 900px; */
+  height: 100%;
   background: #fff;
   margin-left: 20px;
   text-align: start;
