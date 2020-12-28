@@ -64,6 +64,9 @@
           @click="addSyntaxTemplate('pagebreak')"
           >&#xe646;</i
         >
+        <i class="iconfont" title="draw.io" @click="isEditDrawIo = true">
+          &#xe7ca;</i
+        >
         <i class="iconfont" title="清除全部" @click="addSyntaxTemplate('clear')"
           >&#xe82e;</i
         >
@@ -112,51 +115,54 @@
 </template>
 
 <script>
-import MarkdownItVue from 'markdown-it-vue';
-import 'markdown-it-vue/dist/markdown-it-vue.css';
-import { jsPDF } from 'jspdf';
-import html2canvas from 'html2canvas';
-import { codemirror } from 'vue-codemirror';
+import MarkdownItVue from "markdown-it-vue";
+import "markdown-it-vue/dist/markdown-it-vue.css";
+import { jsPDF } from "jspdf";
+import html2canvas from "html2canvas";
+import { codemirror } from "vue-codemirror";
 
-import 'codemirror/mode/markdown/markdown.js';
+import "codemirror/mode/markdown/markdown.js";
 
-import 'codemirror/theme/3024-night.css';
-import 'codemirror/theme/base16-light.css';
-import 'codemirror/theme/monokai.css';
-import 'codemirror/theme/solarized.css';
-import 'codemirror/addon/hint/show-hint.js';
-import 'codemirror/addon/hint/show-hint.css';
-import 'codemirror/addon/hint/javascript-hint.js';
-import 'codemirror/addon/selection/active-line.js';
-import 'codemirror/addon/scroll/annotatescrollbar.js';
-import 'codemirror/addon/search/matchesonscrollbar.js';
-import 'codemirror/addon/search/searchcursor.js';
-import 'codemirror/addon/search/match-highlighter.js';
+import "codemirror/theme/3024-night.css";
+import "codemirror/theme/base16-light.css";
+import "codemirror/theme/monokai.css";
+import "codemirror/theme/solarized.css";
+import "codemirror/addon/hint/show-hint.js";
+import "codemirror/addon/hint/show-hint.css";
+import "codemirror/addon/hint/javascript-hint.js";
+import "codemirror/addon/selection/active-line.js";
+import "codemirror/addon/scroll/annotatescrollbar.js";
+import "codemirror/addon/search/matchesonscrollbar.js";
+import "codemirror/addon/search/searchcursor.js";
+import "codemirror/addon/search/match-highlighter.js";
 // require active-line.js
-import 'codemirror/addon/selection/active-line.js';
+import "codemirror/addon/selection/active-line.js";
 // closebrackets
-import 'codemirror/addon/edit/closebrackets.js';
+import "codemirror/addon/edit/closebrackets.js";
 // keyMap
-import 'codemirror/mode/clike/clike.js';
-import 'codemirror/addon/edit/matchbrackets.js';
-import 'codemirror/addon/comment/comment.js';
-import 'codemirror/addon/dialog/dialog.js';
-import 'codemirror/addon/dialog/dialog.css';
-import 'codemirror/addon/search/searchcursor.js';
-import 'codemirror/addon/search/search.js';
-import 'codemirror/keymap/emacs.js';
-import 'codemirror/keymap/sublime.js';
+import "codemirror/mode/clike/clike.js";
+import "codemirror/addon/edit/matchbrackets.js";
+import "codemirror/addon/comment/comment.js";
+import "codemirror/addon/dialog/dialog.js";
+import "codemirror/addon/dialog/dialog.css";
+import "codemirror/addon/search/searchcursor.js";
+import "codemirror/addon/search/search.js";
+import "codemirror/keymap/emacs.js";
+import "codemirror/keymap/sublime.js";
 
 // foldGutter
-import 'codemirror/addon/fold/foldgutter.css';
-import 'codemirror/addon/fold/brace-fold.js';
-import 'codemirror/addon/fold/comment-fold.js';
-import 'codemirror/addon/fold/foldcode.js';
-import 'codemirror/addon/fold/foldgutter.js';
-import 'codemirror/addon/fold/indent-fold.js';
-import 'codemirror/addon/fold/markdown-fold.js';
+import "codemirror/addon/fold/foldgutter.css";
+import "codemirror/addon/fold/brace-fold.js";
+import "codemirror/addon/fold/comment-fold.js";
+import "codemirror/addon/fold/foldcode.js";
+import "codemirror/addon/fold/foldgutter.js";
+import "codemirror/addon/fold/indent-fold.js";
+import "codemirror/addon/fold/markdown-fold.js";
 
-import { exportWord } from 'mhtml-to-word';
+// import { exportWord } from "mhtml-to-word";
+// import HTMLtoDOCX from "html-to-docx";
+import htmlDocx from "html-docx-js/dist/html-docx";
+import { saveAs } from "file-saver";
 
 export default {
   components: {
@@ -165,13 +171,14 @@ export default {
   },
   data() {
     return {
-      content: '',
+      content: "",
       editor: null,
+      isEditDrawIo: false,
       cmOptions: {
         tabSize: 4,
         indentUnit: 2,
-        theme: '3024-night',
-        mode: 'text/x-markdown',
+        theme: "3024-night",
+        mode: "text/x-markdown",
         highlightFormatting: true,
         maxBlockquoteDepth: true,
         xml: true,
@@ -181,9 +188,9 @@ export default {
         line: true,
         foldgutter: true,
         gutters: [
-          'CodeMirror-linenumbers',
-          'CodeMirror-foldgutter',
-          'CodeMirror-lint-markers',
+          "CodeMirror-linenumbers",
+          "CodeMirror-foldgutter",
+          "CodeMirror-lint-markers",
         ],
         lineWrapping: true,
         foldGutter: true,
@@ -194,30 +201,30 @@ export default {
   },
   mounted() {
     this.editor = this.$refs.mytextarea.codemirror;
-    this.editor.on('change', (cm) => {
+    this.editor.on("change", (cm) => {
       this.content = cm.getValue();
     });
-    this.editor.setOption('extraKeys', {
-      'Alt-Q': (cm) => {
-        cm.execCommand('goLineLeftCmd');
+    this.editor.setOption("extraKeys", {
+      "Alt-Q": (cm) => {
+        cm.execCommand("goLineLeftCmd");
       },
     });
   },
   methods: {
     exportFile(value) {
-      if (value === 'pdf') {
-        this.makeMpdf('a.pdf');
-      } else if (value === 'word') {
-        this.downloadWord('a');
-      } else if (value === 'markdown') {
-        this.downloadMD('a.md', this.content);
+      if (value === "pdf") {
+        this.makeMpdf("a.pdf");
+      } else if (value === "word") {
+        this.downloadWord();
+      } else if (value === "markdown") {
+        this.downloadMD("a.md", this.content);
       } else {
-        this.downloadHtml('a.html');
+        this.downloadHtml("a.html");
       }
     },
 
     downloadPdf(fileName) {
-      const el = document.querySelector('.markdown-body');
+      const el = document.querySelector(".markdown-body");
 
       html2canvas(el, {
         useCORS: false,
@@ -237,9 +244,9 @@ export default {
         const imgWidth = 595.28;
         const imgHeight = (592.28 / contentWidth) * contentHeight;
 
-        const pageData = canvas.toDataURL('image/jpeg', 1.0);
+        const pageData = canvas.toDataURL("image/jpeg", 1.0);
 
-        const pdf = new jsPDF('', 'pt', 'a4');
+        const pdf = new jsPDF("", "pt", "a4");
 
         //有两个高度需要区分，一个是html页面的实际高度，和生成pdf的页面高度(841.89)
         //当内容未超过pdf一页显示的范围，无需分页
@@ -254,7 +261,7 @@ export default {
           });
         } else {
           while (leftHeight > 0) {
-            pdf.addImage(pageData, 'JPEG', 0, position, imgWidth, imgHeight);
+            pdf.addImage(pageData, "JPEG", 0, position, imgWidth, imgHeight);
             leftHeight -= pageHeight;
             position -= 841.89;
             //避免添加空白页
@@ -269,44 +276,44 @@ export default {
     },
 
     makeMpdf(fileName) {
-      const element = document.querySelector('.markdown-body');
+      const element = document.querySelector(".markdown-body");
 
       html2canvas(element, {
         // useCORS: true,
         logging: true,
         // allowTaint: true
       }).then((canvas) => {
-        const pdf = new jsPDF('p', 'mm', 'a4');
-        const ctx = canvas.getContext('2d'),
+        const pdf = new jsPDF("p", "mm", "a4");
+        const ctx = canvas.getContext("2d"),
           a4w = 190,
           a4h = 277, //A4大小，210mm x 297mm，四边各保留10mm的边距，显示区域190x277
           imgHeight = Math.floor((a4h * canvas.width) / a4w); //按A4显示比例换算一页图像的像素高度
         let renderedHeight = 0;
 
         while (renderedHeight < canvas.height) {
-          const page = document.createElement('canvas');
+          const page = document.createElement("canvas");
           page.width = canvas.width;
           page.height = Math.min(imgHeight, canvas.height - renderedHeight); //可能内容不足一页
 
           page
-            .getContext('2d')
+            .getContext("2d")
             .putImageData(
               ctx.getImageData(
                 0,
                 renderedHeight,
                 canvas.width,
-                Math.min(imgHeight, canvas.height - renderedHeight),
+                Math.min(imgHeight, canvas.height - renderedHeight)
               ),
               0,
-              0,
+              0
             );
           pdf.addImage(
-            page.toDataURL('image/jpeg', 1.0),
-            'JPEG',
+            page.toDataURL("image/jpeg", 1.0),
+            "JPEG",
             10,
             10,
             a4w,
-            Math.min(a4h, (a4w * page.height) / page.width),
+            Math.min(a4h, (a4w * page.height) / page.width)
           ); //添加图像到页面，保留10mm边距
 
           renderedHeight += imgHeight;
@@ -316,11 +323,40 @@ export default {
       });
     },
 
-    downloadWord(fileName) {
-      exportWord({
-        selector: '.md-body',
-        filename: fileName,
-      });
+    downloadWord() {
+      const svgElements = document.querySelectorAll("svg");
+      if (svgElements.length) {
+        svgElements.forEach(async (e) => {
+          const canvas = await html2canvas(e.parentNode);
+          const img = new Image();
+          img.src = canvas.toDataURL();
+          console.log(img);
+
+          // console.log(e.parentNode.innerHTML);
+        });
+      }
+
+      //将html转成blob
+      const o = document.createElement("div");
+      const html = document.querySelector(".md-body");
+      o.appendChild(html);
+      const htmlString = o.innerHTML;
+      const content = `
+        <!DOCTYPE html>
+        <html lang="en">
+          <head>
+            <title></title>
+          </head>
+          <body>
+          ${htmlString}
+          </body>
+        </html>
+        `;
+
+      const converted = htmlDocx.asBlob(content);
+
+      // 下载
+      saveAs(converted, "a.docx");
     },
 
     downloadMD(fileName, content) {
@@ -328,15 +364,15 @@ export default {
 
       const blob = new Blob([content]);
       let save_link = document.createElementNS(
-        'http://www.w3.org/1999/xhtml',
-        'a',
+        "http://www.w3.org/1999/xhtml",
+        "a"
       );
       save_link.href = urlObject.createObjectURL(blob);
       save_link.download = fileName;
 
-      const ev = document.createEvent('MouseEvents');
+      const ev = document.createEvent("MouseEvents");
       ev.initMouseEvent(
-        'click',
+        "click",
         true,
         false,
         window,
@@ -350,14 +386,14 @@ export default {
         false,
         false,
         0,
-        null,
+        null
       );
       save_link.dispatchEvent(ev);
     },
 
     downloadHtml(fileName) {
-      const div = document.querySelector('.md-body');
-      const o = document.createElement('div');
+      const div = document.querySelector(".md-body");
+      const o = document.createElement("div");
       o.appendChild(div);
 
       const htmlString = o.innerHTML;
@@ -381,64 +417,64 @@ export default {
     addSyntaxTemplate(type) {
       const isSelected = this.editor.somethingSelected();
       const value = this.editor.getValue();
-      let newValue = '';
+      let newValue = "";
 
-      if (type === 'bold') {
-        !isSelected && (newValue = value + ' **粗体**');
-        isSelected && this.setState('**');
-      } else if (type === 'italics') {
-        !isSelected && (newValue = value + ' *斜体*');
-        isSelected && this.setState('*');
-      } else if (type === 'strikethrough') {
-        !isSelected && (newValue = value + ' ~~删除线~~');
-        isSelected && this.setState('~~');
-      } else if (type === 'underline') {
-        !isSelected && (newValue = value + ' ++下划线++');
-        isSelected && this.setState('++');
-      } else if (type === 'marker') {
-        !isSelected && (newValue = value + ' ==背景高亮==');
-        isSelected && this.setState('==');
-      } else if (type === 'H1') {
-        !isSelected && (newValue = value + ' # 一级标题');
-        isSelected && this.addUnorderList('# ');
-      } else if (type === 'link') {
-        newValue = value + '  [sobey](http://www.sobey.com)';
-      } else if (type === 'quote') {
-        !isSelected && (newValue = value + '  > ');
-        isSelected && this.addUnorderList('> ');
-      } else if (type === 'code') {
+      if (type === "bold") {
+        !isSelected && (newValue = value + " **粗体**");
+        isSelected && this.setState("**");
+      } else if (type === "italics") {
+        !isSelected && (newValue = value + " *斜体*");
+        isSelected && this.setState("*");
+      } else if (type === "strikethrough") {
+        !isSelected && (newValue = value + " ~~删除线~~");
+        isSelected && this.setState("~~");
+      } else if (type === "underline") {
+        !isSelected && (newValue = value + " ++下划线++");
+        isSelected && this.setState("++");
+      } else if (type === "marker") {
+        !isSelected && (newValue = value + " ==背景高亮==");
+        isSelected && this.setState("==");
+      } else if (type === "H1") {
+        !isSelected && (newValue = value + " # 一级标题");
+        isSelected && this.addUnorderList("# ");
+      } else if (type === "link") {
+        newValue = value + "  [sobey](http://www.sobey.com)";
+      } else if (type === "quote") {
+        !isSelected && (newValue = value + "  > ");
+        isSelected && this.addUnorderList("> ");
+      } else if (type === "code") {
         // newValue = value + '```int a ```';
-      } else if (type === 'unorderList') {
-        !isSelected && (newValue = value + ' - 无序列表');
-        isSelected && this.addUnorderList('- ');
-      } else if (type === 'orderList') {
-        !isSelected && (newValue = value + ' 1. 有序列表1');
+      } else if (type === "unorderList") {
+        !isSelected && (newValue = value + " - 无序列表");
+        isSelected && this.addUnorderList("- ");
+      } else if (type === "orderList") {
+        !isSelected && (newValue = value + " 1. 有序列表1");
         isSelected && this.addOrderList();
-      } else if (type === 'form') {
+      } else if (type === "form") {
         newValue =
           value +
           `header 1 | header 2
 ---|---
 row 1 col 1 | row 1 col 2
 row 2 col 1 | row 2 col 2`;
-      } else if (type === 'line') {
+      } else if (type === "line") {
         newValue = value + ` -----------`;
-      } else if (type === 'image') {
+      } else if (type === "image") {
         newValue =
           value +
           ` ![GitHub set up](http://zh.mweb.im/asset/img/set-up-git.gif )`;
-      } else if (type === 'pagebreak') {
+      } else if (type === "pagebreak") {
         newValue = value + `[========]`;
       }
 
-      (newValue || type === 'clear') && this.editor.setValue(newValue);
+      (newValue || type === "clear") && this.editor.setValue(newValue);
     },
 
     addOrderList() {
       const selectContent = this.editor.listSelections()[0]; // 第一个选中的文本
       let { anchor, head } = selectContent;
       head.line >= anchor.line &&
-        head.sticky === 'before' &&
+        head.sticky === "before" &&
         ([head, anchor] = [anchor, head]);
       let preLine = head.line;
       let aftLine = anchor.line;
@@ -460,7 +496,7 @@ row 2 col 1 | row 2 col 2`;
         const selectVal = this.editor.getSelection();
         let preStr = this.editor.getRange({ line: preLine, ch: 0 }, head);
         let preNumber = 0;
-        let preBlank = '';
+        let preBlank = "";
         if (/^( |\t)+/.test(preStr)) {
           // 有序列表标识前也许会有空格或tab缩进
           preBlank = preStr.match(/^( |\t)+/)[0];
@@ -480,7 +516,7 @@ row 2 col 1 | row 2 col 2`;
       const selectContent = this.editor.listSelections()[0]; // 第一个选中的文本
       let { anchor, head } = selectContent;
       head.line >= anchor.line &&
-        head.sticky === 'before' &&
+        head.sticky === "before" &&
         ([head, anchor] = [anchor, head]);
       let preLine = head.line;
       let aftLine = anchor.line;
@@ -498,7 +534,7 @@ row 2 col 1 | row 2 col 2`;
         // 检测开头是否有匹配的字符串，有就将其删除
         const preStr = this.editor.getRange({ line: preLine, ch: 0 }, head);
         if (preStr === matchStr) {
-          this.editor.replaceRange('', { line: preLine, ch: 0 }, head);
+          this.editor.replaceRange("", { line: preLine, ch: 0 }, head);
         } else {
           const selectVal = this.editor.getSelection();
           let replaceStr = `\n\n${matchStr}${selectVal}\n\n`;
@@ -520,7 +556,7 @@ row 2 col 1 | row 2 col 2`;
       const selectContent = this.editor.listSelections()[0]; // 第一个选中的文本
       let { anchor, head } = selectContent; // 前后光标位置
       head.line >= anchor.line &&
-        head.sticky === 'before' &&
+        head.sticky === "before" &&
         ([head, anchor] = [anchor, head]);
       let { line: preLine, ch: prePos } = head;
       let { line: aftLine, ch: aftPos } = anchor;
@@ -533,15 +569,15 @@ row 2 col 1 | row 2 col 2`;
       }) === matchStr && (aftAlready = true);
       // 去除前后的matchStr
       aftAlready &&
-        this.editor.replaceRange('', anchor, {
+        this.editor.replaceRange("", anchor, {
           line: aftLine,
           ch: aftPos + changePos,
         });
       preAlready &&
         this.editor.replaceRange(
-          '',
+          "",
           { line: preLine, ch: prePos - changePos },
-          head,
+          head
         );
       if (!preAlready && !aftAlready) {
         // 前后都没有matchStr
@@ -553,7 +589,7 @@ row 2 col 1 | row 2 col 2`;
         aftPos += aftLine === preLine ? changePos : 0;
         this.editor.setSelection(
           { line: aftLine, ch: aftPos },
-          { line: preLine, ch: prePos },
+          { line: preLine, ch: prePos }
         );
       } else if (!preAlready) {
         // 只有后面有matchStr
@@ -563,7 +599,7 @@ row 2 col 1 | row 2 col 2`;
         aftPos += aftLine === preLine ? changePos : 0;
         this.editor.setSelection(
           { line: aftLine, ch: aftPos },
-          { line: preLine, ch: prePos },
+          { line: preLine, ch: prePos }
         );
       } else if (!aftAlready) {
         // 只有前面有matchStr
@@ -573,7 +609,7 @@ row 2 col 1 | row 2 col 2`;
         aftPos -= aftLine === preLine ? changePos : 0;
         this.editor.setSelection(
           { line: aftLine, ch: aftPos },
-          { line: preLine, ch: prePos },
+          { line: preLine, ch: prePos }
         );
       }
       this.editor.focus();
@@ -625,7 +661,7 @@ i {
   text-align: start;
 }
 .el-dropdown-link {
-  font-family: 'Times New Roman', Times, serif;
+  font-family: "Times New Roman", Times, serif;
   cursor: pointer;
 }
 .markdown-body {
