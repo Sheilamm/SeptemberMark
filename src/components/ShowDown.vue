@@ -58,15 +58,7 @@
         <i class="iconfont" title="插入图片" @click="addSyntaxTemplate('image')"
           >&#xe82c;</i
         >
-        <i
-          class="iconfont"
-          title="插入分页符"
-          @click="addSyntaxTemplate('pagebreak')"
-          >&#xe646;</i
-        >
-        <i class="iconfont" title="draw.io" @click="isEditDrawIo = true">
-          &#xe7ca;</i
-        >
+
         <i class="iconfont" title="清除全部" @click="addSyntaxTemplate('clear')"
           >&#xe82e;</i
         >
