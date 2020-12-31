@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import App from './App.vue';
-import Mermaid from 'mermaid';
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import { codemirror } from 'vue-codemirror';
