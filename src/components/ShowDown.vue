@@ -228,15 +228,31 @@ export default {
       this.$emit("contentChange", this.pfoo);
     },
 
-    exportFile(value) {
-      if (value === "pdf") {
-        this.makeMpdf("a.pdf");
-      } else if (value === "word") {
-        this.downloadWord();
-      } else if (value === "markdown") {
-        this.downloadMD("a.md", this.content);
-      } else {
-        this.downloadHtml("a.html");
+    async exportFile(value) {
+      try {
+        const result = await this.$prompt("请输入文件名", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+        });
+        if (result.value) {
+          if (value === "pdf") {
+            this.makeMpdf(`${result.value}.pdf`);
+          } else if (value === "word") {
+            this.downloadWord(`${result.value}.docx`);
+          } else if (value === "markdown") {
+            this.downloadMD(`${result.value}.md`, this.content);
+          } else {
+            this.downloadHtml(`${result.value}.html`);
+          }
+        } else {
+          this.$message({
+            showClose: true,
+            message: "文件名不能为空",
+            type: "warning",
+          });
+        }
+      } catch (error) {
+        console.log(error);
       }
     },
 
@@ -357,8 +373,8 @@ export default {
       canvas.remove();
     },
 
-    async downloadWord() {
-      this.convertImagesToBase64();
+    async downloadWord(fileName) {
+      // this.convertImagesToBase64();
 
       const svgElements = document.getElementsByTagName("svg");
       if (svgElements.length) {
@@ -392,7 +408,7 @@ export default {
       const converted = htmlDocx.asBlob(content);
 
       // 下载
-      saveAs(converted, "a.docx");
+      saveAs(converted, fileName);
     },
 
     downloadMD(fileName, content) {
