@@ -10,7 +10,7 @@ import './assets/fonts/iconfont.css'
 Vue.use(codemirror);
 
 Vue.config.productionTip = false;
-Vue.use(Mermaid);
+
 Vue.use(ElementUI);
 
 new Vue({

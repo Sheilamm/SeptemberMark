@@ -3,73 +3,88 @@
     <!-- 工具栏 -->
     <div class="toolbar">
       <div>
-        <i class="iconfont" title="粗体" @click="addSyntaxTemplate('bold')"
-          >&#xe61c;</i
-        >
-        <i class="iconfont" title="斜体" @click="addSyntaxTemplate('italics')"
-          >&#xe614;</i
-        >
-        <i
-          class="iconfont"
+        <img
+          src="@/assets/images/bold.png"
+          title="粗体"
+          @click="addSyntaxTemplate('bold')"
+        />
+        <img
+          src="@/assets/images/italics.png"
+          title="斜体"
+          @click="addSyntaxTemplate('italics')"
+        />
+
+        <img
+          src="@/assets/images/strikethrough.png"
           title="删除线"
           @click="addSyntaxTemplate('strikethrough')"
-          >&#xe61b;</i
-        >
-        <i
-          class="iconfont"
+        />
+
+        <img
+          src="@/assets/images/underline.png"
           title="下划线"
           @click="addSyntaxTemplate('underline')"
-          >&#xe634;</i
-        >
-        <i class="iconfont" title="标记" @click="addSyntaxTemplate('marker')"
-          >&#xe66a;</i
-        >
+        />
 
-        <i class="iconfont" title="标题" @click="addSyntaxTemplate('H1')"
-          >&#xe645;</i
-        >
-        <i class="iconfont" title="链接" @click="addSyntaxTemplate('link')"
-          >&#xe625;</i
-        >
-        <i class="iconfont" title="引用" @click="addSyntaxTemplate('quote')"
-          >&#xe697;</i
-        >
-        <i class="iconfont" title="代码" @click="addSyntaxTemplate('code')"
-          >&#xe610;</i
-        >
-        <i
-          class="iconfont"
+        <img
+          src="@/assets/images/mark.png"
+          title="标记"
+          @click="addSyntaxTemplate('marker')"
+        />
+
+        <img
+          src="@/assets/images/title.png"
+          title="标题"
+          @click="addSyntaxTemplate('H1')"
+        />
+
+        <img
+          src="@/assets/images/link.png"
+          title="链接"
+          @click="addSyntaxTemplate('link')"
+        />
+
+        <img
+          src="@/assets/images/quotation.png"
+          title="引用"
+          @click="addSyntaxTemplate('quote')"
+        />
+
+        <img
+          src="@/assets/images/ordered.png"
           title="无序列表"
           @click="addSyntaxTemplate('unorderList')"
-          >&#xe82d;</i
-        >
-        <i
-          class="iconfont"
+        />
+
+        <img
+          src="@/assets/images/unordered.png"
           title="有序列表"
           @click="addSyntaxTemplate('orderList')"
-          >&#xe694;</i
-        >
-        <i class="iconfont" title="表格" @click="addSyntaxTemplate('form')"
-          >&#xe82f;</i
-        >
-        <i class="iconfont" title="横线" @click="addSyntaxTemplate('line')"
-          >&#xe600;</i
-        >
-        <i class="iconfont" title="插入图片" @click="addSyntaxTemplate('image')"
-          >&#xe82c;</i
-        >
-        <i
-          class="iconfont"
-          title="插入分页符"
-          @click="addSyntaxTemplate('pagebreak')"
-          >&#xe646;</i
-        >
-        <i class="iconfont" title="draw.io" @click="isEditDrawIo = true">
-          &#xe7ca;</i
-        >
-        <i class="iconfont" title="清除全部" @click="addSyntaxTemplate('clear')"
-          >&#xe82e;</i
-        >
+        />
+
+        <img
+          src="@/assets/images/form.png"
+          title="表格"
+          @click="addSyntaxTemplate('form')"
+        />
+
+        <img
+          src="@/assets/images/line.png"
+          title="横线"
+          @click="addSyntaxTemplate('line')"
+        />
+
+        <img
+          src="@/assets/images/picture.png"
+          title="插入图片"
+          @click="addSyntaxTemplate('image')"
+        />
+
+        <img
+          src="@/assets/images/clear.png"
+          title="清除全部"
+          @click="addSyntaxTemplate('clear')"
+        />
       </div>
       <div>
         <el-dropdown
@@ -107,7 +122,6 @@
         <el-col :span="12">
           <div class="md-body">
             <markdown-it-vue :content="content" />
-            <img src="@/assets/logo.png" alt="" />
           </div>
         </el-col>
       </el-row>
@@ -331,7 +345,7 @@ export default {
 
       const ctx = canvas.getContext("2d");
 
-      [].forEach.call(regularImages, function (img) {
+      [].forEach.call(regularImages, function(img) {
         canvas.width = img.width;
         canvas.height = img.height;
 
@@ -651,15 +665,16 @@ row 2 col 1 | row 2 col 2`;
   background: #f2f2f2;
   text-align: start;
   padding: 0px 20px;
-  line-height: 40px;
+  line-height: 50px;
   text-align: start;
   display: flex;
   justify-content: space-between;
 }
 
-i {
+img {
   margin: 0px 10px;
   cursor: pointer;
+  height: 20px;
 }
 .editor-area {
   background: #f2f2f2;
