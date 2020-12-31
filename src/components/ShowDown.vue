@@ -130,6 +130,7 @@
 </template>
 
 <script>
+import "codemirror/lib/codemirror.css";
 import "codemirror/mode/markdown/markdown.js";
 
 import "codemirror/theme/3024-night.css";
