@@ -178,11 +178,12 @@ import htmlDocx from "html-docx-js/dist/html-docx";
 import { saveAs } from "file-saver";
 
 export default {
+  name: "show-down",
   components: {
     MarkdownItVue,
     codemirror,
   },
-
+  props: ["value"],
   data() {
     return {
       content: "",
@@ -223,12 +224,16 @@ export default {
         cm.execCommand("goLineLeftCmd");
       },
     });
+
+    if (this.value) {
+      this.content = this.value;
+      this.editor.setValue(this.content);
+    }
   },
   methods: {
     doChange() {
-      this.$emit("contentChange", this.pfoo);
+      console.log(this.content);
     },
-
     async exportFile(value) {
       try {
         const result = await this.$prompt("请输入文件名", {
@@ -669,6 +674,13 @@ row 2 col 1 | row 2 col 2`;
     },
   },
   watch: {
+    value(val) {
+      this.content = val;
+      const editorValue = this.editor.getValue();
+      if (!(this.content === editorValue)) {
+        this.editor.setValue(this.content);
+      }
+    },
     content(val) {
       this.$emit("input", val);
     },
