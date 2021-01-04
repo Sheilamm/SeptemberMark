@@ -739,7 +739,7 @@ img {
   height: 890px;
 }
 
-.el-dropdown-link {
+.markdown-editor .el-dropdown-link {
   font-family: "Times New Roman", Times, serif;
   cursor: pointer;
 }
