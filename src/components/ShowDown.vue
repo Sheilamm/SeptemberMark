@@ -117,7 +117,11 @@
     <div class="editor-area">
       <el-row>
         <el-col :span="12">
-          <codemirror ref="mytextarea" :options="cmOptions"></codemirror>
+          <codemirror
+            ref="mytextarea"
+            :options="cmOptions"
+            :value="content"
+          ></codemirror>
         </el-col>
         <el-col :span="12">
           <div class="md-body">
@@ -227,7 +231,6 @@ export default {
 
     if (this.value) {
       this.content = this.value;
-      this.editor.setValue(this.content);
     }
   },
   methods: {
@@ -676,10 +679,6 @@ row 2 col 1 | row 2 col 2`;
   watch: {
     value(val) {
       this.content = val;
-      const editorValue = this.editor.getValue();
-      if (!(this.content === editorValue)) {
-        this.editor.setValue(this.content);
-      }
     },
     content(val) {
       this.$emit("input", val);
