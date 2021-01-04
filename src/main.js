@@ -5,7 +5,7 @@ import "element-ui/lib/theme-chalk/index.css";
 
 
 // import "codemirror/lib/codemirror.css";
-import "./assets/fonts/iconfont.css";
+// import "./assets/fonts/iconfont.css";
 
 Vue.config.productionTip = false;
 

@@ -1,6 +1,17 @@
 <template>
   <div id="app">
-    <ShowDown v-model="value" />
+    <img src="@/assets/images/title.png" alt="" @click="dialogVisible = true" />
+    <el-row>
+      <el-col :span="10">
+        sssj
+      </el-col>
+      <el-col :span="10">
+        sssj
+      </el-col>
+    </el-row>
+    <el-dialog :visible.sync="dialogVisible">
+      <ShowDown v-model="value" />
+    </el-dialog>
   </div>
 </template>
 
@@ -15,6 +26,7 @@ export default {
   data() {
     return {
       value: "牛逼",
+      dialogVisible: false,
     };
   },
 };

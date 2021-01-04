@@ -95,20 +95,20 @@
           <span class="el-dropdown-link"> 导出为 </span>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item command="pdf">
-              <i class="iconfont" style="color: #f40757">&#xe62d;</i>
+              <img src="@/assets/images/pdf.png" height="26px" />
               PDF</el-dropdown-item
             >
-            <el-dropdown-item command="word"
-              ><i class="iconfont" style="color: #0b5bea">&#xe67a;</i
-              >word</el-dropdown-item
+            <el-dropdown-item command="word">
+              <img src="@/assets/images/word.png" />
+              word</el-dropdown-item
             >
-            <el-dropdown-item command="markdown"
-              ><i class="iconfont" style="color: #1aaba8">&#xe625;</i
-              >markdown</el-dropdown-item
+            <el-dropdown-item command="markdown">
+              <img src="@/assets/images/md.png" />
+              markdown</el-dropdown-item
             >
-            <el-dropdown-item command="html"
-              ><i class="iconfont" style="color: #ba410e">&#xe620;</i
-              >HTML</el-dropdown-item
+            <el-dropdown-item command="html">
+              <img src="@/assets/images/html.png" />
+              HTML</el-dropdown-item
             >
           </el-dropdown-menu>
         </el-dropdown>
@@ -687,7 +687,7 @@ row 2 col 1 | row 2 col 2`;
 };
 </script>
 
-<style>
+<style scoped>
 .toolbar {
   height: 40px;
   background: #f2f2f2;
@@ -704,13 +704,11 @@ img {
   cursor: pointer;
   height: 20px;
 }
-.editor-area {
+.markdown-editor .editor-area {
   background: #f2f2f2;
   height: calc(100% - 40px);
 }
-.el-row {
-  display: flex;
-}
+
 .md-body {
   height: 100%;
   background: #fff;
@@ -719,22 +717,30 @@ img {
   padding: 15px;
   overflow-y: auto;
 }
-.el-col {
+
+.markdown-body {
+  padding: 10px;
+}
+</style>
+
+<style>
+.markdown-editor .vue-codemirror {
+  height: 100%;
+}
+.markdown-editor .CodeMirror {
+  height: 100%;
+  text-align: start;
+}
+.markdown-editor .el-row {
+  display: flex;
+}
+
+.markdown-editor .el-col {
   height: 890px;
 }
 
-.vue-codemirror {
-  height: 100%;
-}
-.CodeMirror {
-  height: 890px !important;
-  text-align: start;
-}
 .el-dropdown-link {
   font-family: "Times New Roman", Times, serif;
   cursor: pointer;
-}
-.markdown-body {
-  padding: 10px;
 }
 </style>
