@@ -688,6 +688,10 @@ row 2 col 1 | row 2 col 2`;
 </script>
 
 <style scoped>
+.markdown-editor {
+  height: 100%;
+  width: 100%;
+}
 .toolbar {
   height: 40px;
   background: #f2f2f2;
@@ -710,7 +714,7 @@ img {
 }
 
 .md-body {
-  height: 100%;
+  height: calc(100% - 30px);
   background: #fff;
   margin-left: 20px;
   text-align: start;
@@ -733,10 +737,11 @@ img {
 }
 .markdown-editor .el-row {
   display: flex;
+  height: 100%;
 }
 
 .markdown-editor .el-col {
-  height: 890px;
+  height: 100%;
 }
 
 .markdown-editor .el-dropdown-link {
