@@ -124,7 +124,7 @@
           ></codemirror>
         </el-col>
         <el-col :span="12">
-          <div class="md-body">
+          <div :class="`md-body md-${new Date().getTime()}`" ref="markItDown">
             <markdown-it-vue :content="content" />
           </div>
         </el-col>
@@ -318,7 +318,10 @@ export default {
     },
 
     makeMpdf(fileName) {
-      const element = document.querySelector(".markdown-body");
+      const container = this.$refs.markItDown;
+      const className = container.className.split(" ")[1];
+
+      const element = document.querySelector(`.${className} .markdown-body`);
 
       html2canvas(element, {
         // useCORS: true,
@@ -383,22 +386,40 @@ export default {
     },
 
     async downloadWord(fileName) {
-      // this.convertImagesToBase64();
+      const container = this.$refs.markItDown;
+      const className = container.className.split(" ")[1];
+      const svgElements = document.querySelectorAll(`.${className} svg`);
 
-      const svgElements = document.getElementsByTagName("svg");
       if (svgElements.length) {
         for (let index = 0; index < svgElements.length; index++) {
-          const e = svgElements[index];
-          const canvas1 = await html2canvas(e.parentNode);
+          const svg = svgElements[index];
+          const s = new XMLSerializer().serializeToString(svg);
+          const src = `data:image/svg+xml;base64,${window.btoa(s)}`;
 
           const img = new Image();
-          img.src = canvas1.toDataURL();
-          e.parentNode.replaceChild(img, e);
+          img.src = src;
+
+          const url = await new Promise((resolve) => {
+            img.onload = () => {
+              const canvas = document.createElement("canvas");
+              canvas.width = img.width;
+              canvas.height = img.height;
+              const context = canvas.getContext("2d");
+              context.drawImage(img, 0, 0);
+
+              const url = canvas.toDataURL("image/png");
+
+              resolve(url);
+            };
+          });
+
+          img.src = url;
+          svg.parentNode.replaceChild(img, svg);
         }
       }
 
-      //将html转成blob
-      const html = document.querySelector(".md-body");
+      // 将html转成blob
+      const html = document.querySelector(`.${className}`);
 
       const htmlString = html.innerHTML;
 
@@ -453,7 +474,10 @@ export default {
     },
 
     downloadHtml(fileName) {
-      const bodyHtml = document.querySelector(".md-body");
+      const container = this.$refs.markItDown;
+      const className = container.className.split(" ")[1];
+
+      const bodyHtml = document.querySelector(`.${className}`);
       const cloneEl = bodyHtml.cloneNode(true);
       const div = document.createElement("div");
       div.appendChild(cloneEl);
@@ -741,7 +765,7 @@ img {
 }
 
 .markdown-editor .el-col {
-  height: 100%;
+  height: 700px;
 }
 
 .markdown-editor .el-dropdown-link {
