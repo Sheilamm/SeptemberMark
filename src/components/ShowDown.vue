@@ -453,11 +453,12 @@ export default {
     },
 
     downloadHtml(fileName) {
-      const div = document.querySelector(".md-body");
-      const o = document.createElement("div");
-      o.appendChild(div);
+      const bodyHtml = document.querySelector(".md-body");
+      const cloneEl = bodyHtml.cloneNode(true);
+      const div = document.createElement("div");
+      div.appendChild(cloneEl);
 
-      const htmlString = o.innerHTML;
+      const htmlString = div.innerHTML;
 
       const preHtml = `<!DOCTYPE html>
 <html lang="en">
@@ -471,7 +472,6 @@ export default {
 
       const content = preHtml + htmlString + tailHtml;
 
-      // const blob = new Blob([content]);
       this.downloadMD(fileName, content);
     },
 
